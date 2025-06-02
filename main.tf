@@ -4,7 +4,7 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "example" {
   name     = "example-resources"
-  location = "East US"
+  location = "South Africa North"
 }
 
 resource "azurerm_virtual_network" "example" {
@@ -39,6 +39,13 @@ resource "azurerm_network_security_group" "example" {
   }
 }
 
+resource "azurerm_public_ip" "example" {
+  name                = "pip-dev"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+  allocation_method   = "Dynamic"
+}
+
 resource "azurerm_network_interface" "example" {
   name                = "nic-dev"
   location            = azurerm_resource_group.example.location
@@ -50,15 +57,11 @@ resource "azurerm_network_interface" "example" {
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.example.id
   }
-
-  network_security_group_id = azurerm_network_security_group.example.id
 }
 
-resource "azurerm_public_ip" "example" {
-  name                = "pip-dev"
-  location            = azurerm_resource_group.example.location
-  resource_group_name = azurerm_resource_group.example.name
-  allocation_method   = "Dynamic"
+resource "azurerm_network_interface_security_group_association" "example" {
+  network_interface_id      = azurerm_network_interface.example.id
+  network_security_group_id = azurerm_network_security_group.example.id
 }
 
 resource "azurerm_linux_virtual_machine" "example" {
@@ -74,7 +77,7 @@ resource "azurerm_linux_virtual_machine" "example" {
 
   admin_ssh_key {
     username   = "azureuser"
-    public_key = file("~/.ssh/id_rsa.pub") # replace with your public key path
+    public_key = file("~/.ssh/id_rsa.pub") # Replace with your actual path if needed
   }
 
   os_disk {
