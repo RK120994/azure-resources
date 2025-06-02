@@ -1,4 +1,5 @@
-name: CI
+# .github/workflows/ci.yml
+name: Node.js CI
 
 on:
   push:
@@ -14,13 +15,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Show file structure (debugging)
+        run: ls -R
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          cd frontend  # Change this to your subdirectory if needed
+          npm install
 
       - name: Run tests
-        run: npm test
+        run: |
+          cd frontend  # Change again if needed
+          npm test
